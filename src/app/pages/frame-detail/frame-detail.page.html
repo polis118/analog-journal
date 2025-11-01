@@ -1,0 +1,126 @@
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark text-zinc-900 dark:text-white" appSwipeBack>
+  <!-- Top App Bar -->
+  <header class="sticky top-0 z-10 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 bg-background-light/80 dark:bg-background-dark/80 px-4 pb-3 backdrop-blur-sm" style="padding-top: max(env(safe-area-inset-top), 1rem);">
+    <button (click)="goBack()" class="flex size-10 items-center justify-center rounded-full">
+      <span class="material-symbols-outlined text-2xl">arrow_back</span>
+    </button>
+    <h1 class="text-lg font-bold">Frame {{ frame?.frame_number }}</h1>
+    <button (click)="editFrame()" class="rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white">Edit</button>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1" *ngIf="!isLoading && frame">
+    <!-- Image Placeholder -->
+    <div class="w-full bg-background-light dark:bg-background-dark py-4 px-4">
+      <div class="aspect-w-4 aspect-h-3 w-full overflow-hidden rounded-xl bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center">
+        <span class="material-symbols-outlined text-zinc-400 dark:text-zinc-600" style="font-size: 64px;">photo_camera</span>
+      </div>
+    </div>
+
+    <!-- Metadata Section -->
+    <div class="flex flex-col gap-2 p-4">
+      <!-- Frame Details -->
+      <div class="flex flex-col gap-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4">
+        <div class="flex items-center justify-between min-h-[2.5rem]">
+          <div class="flex items-center gap-4">
+            <div class="flex size-10 items-center justify-center rounded-lg bg-primary/20 text-primary">
+              <span class="material-symbols-outlined">filter_1</span>
+            </div>
+            <p class="font-medium">Frame Number</p>
+          </div>
+          <p class="font-semibold">{{ frame.frame_number }}</p>
+        </div>
+        <div class="flex items-center justify-between min-h-[2.5rem]">
+          <div class="flex items-center gap-4">
+            <div class="flex size-10 items-center justify-center rounded-lg bg-primary/20 text-primary">
+              <span class="material-symbols-outlined">calendar_today</span>
+            </div>
+            <p class="font-medium">Date & Time</p>
+          </div>
+          <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">{{ formatDateTime(frame.date_taken) }}</p>
+        </div>
+      </div>
+
+      <!-- Context -->
+      <div class="flex flex-col gap-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4">
+        <div class="flex items-center justify-between min-h-[2.5rem]" *ngIf="frame.location">
+          <div class="flex items-center gap-4">
+            <div class="flex size-10 items-center justify-center rounded-lg bg-primary/20 text-primary">
+              <span class="material-symbols-outlined">location_on</span>
+            </div>
+            <p class="font-medium">Location</p>
+          </div>
+          <div class="text-right">
+            <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">{{ frame.location }}</p>
+            <p class="text-xs text-zinc-400 dark:text-zinc-500 mt-1" *ngIf="frame.latitude && frame.longitude">
+              {{ frame.latitude.toFixed(6) }}, {{ frame.longitude.toFixed(6) }}
+            </p>
+            <a 
+              *ngIf="frame.latitude && frame.longitude"
+              [href]="'https://www.google.com/maps?q=' + frame.latitude + ',' + frame.longitude"
+              target="_blank"
+              class="text-xs text-primary hover:underline mt-1 inline-block"
+            >
+              Open in Maps →
+            </a>
+          </div>
+        </div>
+        <div class="flex items-center justify-between min-h-[2.5rem]">
+          <div class="flex items-center gap-4">
+            <div class="flex size-10 items-center justify-center rounded-lg bg-primary/20 text-primary">
+              <span class="material-symbols-outlined">label</span>
+            </div>
+            <p class="font-medium">Scene Type</p>
+          </div>
+          <div class="rounded-full bg-primary/20 px-3 py-1 text-sm font-semibold text-primary capitalize">
+            {{ frame.scene_tag || 'Not set' }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Technicals -->
+      <div class="flex flex-col gap-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4">
+        <div class="flex items-center justify-between min-h-[2.5rem]">
+          <div class="flex items-center gap-4">
+            <div class="flex size-10 items-center justify-center rounded-lg bg-primary/20 text-primary">
+              <span class="material-symbols-outlined">camera</span>
+            </div>
+            <p class="font-medium">Aperture</p>
+          </div>
+          <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">{{ frame.aperture || '-' }}</p>
+        </div>
+        <div class="flex items-center justify-between min-h-[2.5rem]">
+          <div class="flex items-center gap-4">
+            <div class="flex size-10 items-center justify-center rounded-lg bg-primary/20 text-primary">
+              <span class="material-symbols-outlined">shutter_speed</span>
+            </div>
+            <p class="font-medium">Shutter Speed</p>
+          </div>
+          <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">{{ frame.shutter_speed || '-' }}</p>
+        </div>
+        <div class="flex items-center justify-between min-h-[2.5rem]">
+          <div class="flex items-center gap-4">
+            <div class="flex size-10 items-center justify-center rounded-lg bg-primary/20 text-primary">
+              <span class="material-symbols-outlined">center_focus_strong</span>
+            </div>
+            <p class="font-medium">Lens</p>
+          </div>
+          <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">{{ frame.lens || film?.lens || '-' }}</p>
+        </div>
+      </div>
+
+      <!-- Notes -->
+      <div class="flex flex-col gap-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4" *ngIf="frame.notes">
+        <div class="flex items-start gap-4">
+          <div class="flex size-10 items-center justify-center rounded-lg bg-primary/20 text-primary shrink-0 mt-1">
+            <span class="material-symbols-outlined">edit_note</span>
+          </div>
+          <div class="flex flex-col w-full">
+            <p class="font-medium mb-1">Notes</p>
+            <p class="text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">{{ frame.notes }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

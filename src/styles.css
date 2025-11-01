@@ -1,1 +1,20 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global styles for preventing overscroll white background */
+
+* {
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  overscroll-behavior: none;
+  background-color: #111621; /* Dark mode background by default */
+}
+
+html.light, body.light {
+  background-color: #f6f6f8; /* Light mode background */
+}
+
+/* Prevent pull-to-refresh on mobile */
+body {
+  overscroll-behavior-y: contain;
+}

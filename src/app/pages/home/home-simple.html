@@ -1,0 +1,33 @@
+<!-- ULTRA JEDNODUCHÁ VERZE PRO TEST -->
+<div style="padding: 20px; background: white; min-height: 100vh;">
+  <h1 style="color: #333;">Analog Journal - Test</h1>
+  
+  <div style="background: #f0f0f0; padding: 15px; margin: 20px 0;">
+    <p><strong>DEBUG:</strong></p>
+    <p>isLoading: {{ isLoading }}</p>
+    <p>films.length: {{ films.length }}</p>
+  </div>
+  
+  <button (click)="loadFilms()" style="padding: 10px 20px; margin: 5px;">
+    Reload Films
+  </button>
+  
+  <button (click)="addSampleFilms()" style="padding: 10px 20px; margin: 5px;">
+    Add Sample Films
+  </button>
+  
+  <div style="margin-top: 20px;">
+    <h2>Films List:</h2>
+    <div *ngFor="let film of films; let i = index" 
+         style="background: #e3f2fd; padding: 10px; margin: 10px 0; border-left: 4px solid blue;">
+      <strong>{{ i + 1 }}. {{ film.name }}</strong><br>
+      Brand: {{ film.brand }}<br>
+      ISO: {{ film.iso }}<br>
+      Type: {{ film.type }}
+    </div>
+    
+    <p *ngIf="films.length === 0" style="color: red;">
+      NO FILMS IN ARRAY
+    </p>
+  </div>
+</div>

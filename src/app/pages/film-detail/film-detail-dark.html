@@ -1,0 +1,142 @@
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark" appSwipeBack>
+  <!-- Top App Bar -->
+  <header class="sticky top-0 z-10 flex items-center bg-background-light/80 dark:bg-background-dark/80 px-4 pb-2 justify-between backdrop-blur-sm" style="padding-top: max(env(safe-area-inset-top), 1rem);">
+    <div class="flex size-12 shrink-0 items-center cursor-pointer" (click)="goBack()">
+      <span class="material-symbols-outlined text-zinc-900 dark:text-white" style="font-size: 24px;">arrow_back</span>
+    </div>
+    <h1 class="text-zinc-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">
+      {{ film?.name || 'Film Detail' }}
+    </h1>
+    <div class="flex items-center justify-end gap-2">
+      <button (click)="togglePin()" 
+              class="flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 w-10 bg-transparent text-zinc-900 dark:text-white min-w-0 p-0"
+              [title]="film?.is_pinned ? 'Unpin film' : 'Pin as active film'">
+        <span class="material-symbols-outlined" 
+              [style.font-variation-settings]="film?.is_pinned ? &quot;'FILL' 1&quot; : &quot;'FILL' 0&quot;"
+              style="font-size: 24px;">push_pin</span>
+      </button>
+      <button (click)="editFilm()" 
+              class="flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 w-10 bg-transparent text-zinc-900 dark:text-white min-w-0 p-0"
+              title="Edit film details">
+        <span class="material-symbols-outlined" style="font-size: 24px;">edit</span>
+      </button>
+      <button (click)="deleteFilm()" 
+              class="flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 w-10 bg-transparent text-red-600 dark:text-red-500 min-w-0 p-0"
+              title="Delete film">
+        <span class="material-symbols-outlined" style="font-size: 24px;">delete</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="flex-grow">
+    <!-- Content -->
+    <div *ngIf="!isLoading && film">
+      <!-- Metadata Section -->
+      <section class="p-4 pt-2">
+        <div class="grid grid-cols-2 gap-x-4 border-t border-zinc-200 dark:border-zinc-800">
+          <div class="flex flex-col gap-1 py-4 pr-2">
+            <p class="text-zinc-500 dark:text-zinc-400 text-sm font-normal leading-normal">Film Brand</p>
+            <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal">{{ film.brand }}</p>
+          </div>
+          <div class="flex flex-col gap-1 py-4 pl-2">
+            <p class="text-zinc-500 dark:text-zinc-400 text-sm font-normal leading-normal">Film Type</p>
+            <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal">{{ film.type }}</p>
+          </div>
+          <div class="flex flex-col gap-1 border-t border-zinc-200 dark:border-zinc-800 py-4 pr-2">
+            <p class="text-zinc-500 dark:text-zinc-400 text-sm font-normal leading-normal">Camera</p>
+            <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal">{{ film.camera || '-' }}</p>
+          </div>
+          <div class="flex flex-col gap-1 border-t border-zinc-200 dark:border-zinc-800 py-4 pl-2">
+            <p class="text-zinc-500 dark:text-zinc-400 text-sm font-normal leading-normal">Lens</p>
+            <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal">{{ film.lens || '-' }}</p>
+          </div>
+          <div class="flex flex-col gap-1 border-t border-zinc-200 dark:border-zinc-800 py-4 pr-2">
+            <p class="text-zinc-500 dark:text-zinc-400 text-sm font-normal leading-normal">ISO</p>
+            <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal">{{ film.iso }}</p>
+          </div>
+          <div class="flex flex-col gap-1 border-t border-zinc-200 dark:border-zinc-800 py-4 pl-2">
+            <p class="text-zinc-500 dark:text-zinc-400 text-sm font-normal leading-normal">Start Date</p>
+            <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal">{{ formatDate(film.date_started) }}</p>
+          </div>
+          <div class="col-span-2 flex flex-col gap-1 border-t border-zinc-200 dark:border-zinc-800 py-4 cursor-pointer" (click)="editNotes()">
+            <div class="flex items-center justify-between">
+              <p class="text-zinc-500 dark:text-zinc-400 text-sm font-normal leading-normal">Notes</p>
+              <span class="material-symbols-outlined text-zinc-400 dark:text-zinc-500" style="font-size: 18px;">edit</span>
+            </div>
+            <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal">{{ film.notes || 'Tap to add notes' }}</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Frames List -->
+      <section class="px-4 pb-24">
+        <h2 class="text-zinc-900 dark:text-white text-base font-bold leading-tight tracking-[-0.015em] mb-3">
+          Frames ({{ frames.length }})
+        </h2>
+
+        <!-- Empty State for Frames -->
+        <div *ngIf="frames.length === 0" class="flex flex-col px-4 py-6">
+          <div class="flex flex-col items-center gap-6 rounded-xl bg-white dark:bg-zinc-900/50 p-8">
+            <div class="flex items-center justify-center rounded-full bg-zinc-200 dark:bg-zinc-800 size-20 text-zinc-500 dark:text-zinc-400">
+              <span class="material-symbols-outlined !text-4xl">photo_library</span>
+            </div>
+            <div class="flex max-w-[480px] flex-col items-center gap-2">
+              <p class="text-zinc-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] max-w-[480px] text-center">No frames yet</p>
+              <p class="text-zinc-500 dark:text-zinc-400 text-sm font-normal leading-normal max-w-[480px] text-center">Tap the '+' button to log the first frame for this roll.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Frames List -->
+        <div *ngIf="frames.length > 0" class="flex flex-col gap-3">
+          <div *ngFor="let frame of frames" 
+               (click)="openFrameDetail(frame)"
+               class="flex items-center gap-4 rounded-xl p-4 bg-white dark:bg-zinc-900/50 cursor-pointer">
+            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-800">
+              <span class="text-xl font-bold text-zinc-900 dark:text-white">{{ frame.frame_number }}</span>
+            </div>
+            <div class="flex-grow">
+              <p class="font-semibold text-zinc-900 dark:text-white">Aperture: {{ frame.aperture || '-' }}</p>
+              <p class="text-sm text-zinc-500 dark:text-zinc-400">Shutter: {{ frame.shutter_speed || '-' }}</p>
+            </div>
+            <span class="material-symbols-outlined text-zinc-400 dark:text-zinc-500">chevron_right</span>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Floating Action Buttons -->
+  <footer class="sticky bottom-0 p-5 w-full flex justify-between items-end pointer-events-none">
+    <!-- Mark as Developed / Unmark FAB (Left) -->
+    <div class="pointer-events-auto">
+      <button (click)="isDevelopedButtonExpanded ? markAsDeveloped() : toggleDevelopedButton()"
+              [class.w-auto]="isDevelopedButtonExpanded"
+              [class.w-14]="!isDevelopedButtonExpanded"
+              [class.bg-green-600]="!film?.date_finished"
+              [class.dark:bg-green-700]="!film?.date_finished"
+              [class.bg-red-600]="film?.date_finished"
+              [class.dark:bg-red-700]="film?.date_finished"
+              class="flex cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 shadow-lg text-white text-sm font-bold leading-normal tracking-[0.015em] transition-all duration-300 ease-in-out"
+              [class.px-4]="isDevelopedButtonExpanded"
+              [class.gap-2]="isDevelopedButtonExpanded">
+        <span class="material-symbols-outlined" 
+              style="font-variation-settings: 'FILL' 1; font-size: 24px;">
+          {{ film?.date_finished ? 'undo' : 'check_circle' }}
+        </span>
+        <span *ngIf="isDevelopedButtonExpanded" 
+              class="whitespace-nowrap">
+          {{ film?.date_finished ? 'Mark as Not Developed' : 'Mark as Developed' }}
+        </span>
+      </button>
+    </div>
+    
+    <!-- Add Frame FAB (Right) -->
+    <div *ngIf="!film?.date_finished" class="pointer-events-auto">
+      <button (click)="addFrame()"
+              class="flex cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 w-14 shadow-lg bg-primary text-white text-base font-bold leading-normal tracking-[0.015em]">
+        <span class="material-symbols-outlined" style="font-size: 28px;">add</span>
+      </button>
+    </div>
+  </footer>
+</div>

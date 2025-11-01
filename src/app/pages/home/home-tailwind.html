@@ -1,0 +1,165 @@
+<!-- Tailwind CSS verze -->
+<div class="min-h-screen bg-gray-50">
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+      <h1 class="text-2xl font-bold tracking-tight">📽️ Analog Journal</h1>
+      <div class="flex gap-2">
+        <button (click)="resetDatabase()" 
+                class="p-2 hover:bg-blue-500 rounded-lg transition-colors"
+                title="Reset databáze">
+          🗑️
+        </button>
+        <button (click)="addFilm()" 
+                class="bg-white text-blue-600 px-4 py-2 rounded-lg font-semibold hover:bg-blue-50 transition-colors shadow-md">
+          ➕ Přidat film
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-4xl mx-auto px-4 py-6">
+    
+    <!-- Debug Panel (dočasné) -->
+    <div class="bg-gray-800 text-gray-100 rounded-lg p-4 mb-6 font-mono text-sm">
+      <p class="font-bold mb-2">🔍 DEBUG INFO:</p>
+      <p class="mb-1">
+        isLoading: 
+        <span [class]="isLoading ? 'text-red-400' : 'text-green-400'" class="font-bold">
+          {{ isLoading }}
+        </span>
+      </p>
+      <p class="mb-3">
+        Počet filmů: <span class="text-blue-400 font-bold">{{ films.length }}</span>
+      </p>
+      
+      <div class="flex gap-2 mb-3">
+        <button (click)="addSampleFilms()" 
+                class="bg-green-600 hover:bg-green-700 px-3 py-1.5 rounded text-xs font-semibold transition-colors">
+          ➕ Přidat testovací filmy
+        </button>
+        <button (click)="loadFilms()" 
+                class="bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded text-xs font-semibold transition-colors">
+          🔄 Reload
+        </button>
+      </div>
+      
+      <div class="bg-gray-900 rounded p-3 max-h-40 overflow-auto">
+        <p class="font-bold mb-2 text-xs text-gray-400">Filmy v paměti:</p>
+        <div *ngFor="let film of films; let i = index" 
+             class="bg-green-900 border-l-4 border-green-500 px-2 py-1 mb-1 text-xs">
+          {{ i + 1 }}. {{ film.name }} ({{ film.brand }}, ISO {{ film.iso }})
+        </div>
+        <p *ngIf="films.length === 0" class="text-gray-500 italic text-xs">
+          Žádné filmy
+        </p>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="text-center py-20">
+      <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
+      <p class="mt-4 text-gray-600">Načítám filmy...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && films.length === 0" 
+         class="bg-white rounded-xl shadow-sm p-12 text-center">
+      <div class="text-6xl mb-4">🎞️</div>
+      <h2 class="text-2xl font-bold text-gray-800 mb-2">Zatím žádné filmy</h2>
+      <p class="text-gray-600 mb-6">Začni sledovat své analogové filmy</p>
+      <button (click)="addFilm()" 
+              class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors shadow-md">
+        ➕ Přidat první film
+      </button>
+    </div>
+
+    <!-- Films Grid -->
+    <div *ngIf="!isLoading && films.length > 0" class="space-y-4">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-bold text-gray-800">
+          Moje filmy <span class="text-blue-600">({{ films.length }})</span>
+        </h2>
+      </div>
+
+      <!-- Film Cards -->
+      <div *ngFor="let film of films; let i = index" 
+           class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-gray-100">
+        <div class="p-5">
+          <div class="flex items-start justify-between">
+            <div class="flex-1">
+              <!-- Film Header -->
+              <div class="flex items-start gap-3 mb-3">
+                <div class="text-3xl">🎞️</div>
+                <div class="flex-1">
+                  <h3 class="text-lg font-bold text-gray-900 mb-1">
+                    {{ film.name }}
+                  </h3>
+                  <div class="flex flex-wrap gap-2 text-sm">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 font-medium">
+                      {{ film.brand }}
+                    </span>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-800 font-medium">
+                      ISO {{ film.iso }}
+                    </span>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-green-100 text-green-800 font-medium">
+                      {{ film.type }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Film Details -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4 text-sm text-gray-600">
+                <div *ngIf="film.camera" class="flex items-center gap-2">
+                  <span class="font-semibold">📷 Fotoaparát:</span>
+                  <span>{{ film.camera }}</span>
+                </div>
+                <div *ngIf="film.lens" class="flex items-center gap-2">
+                  <span class="font-semibold">🔭 Objektiv:</span>
+                  <span>{{ film.lens }}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="font-semibold">📅 Započato:</span>
+                  <span>{{ formatDate(film.date_started) }}</span>
+                </div>
+                <div *ngIf="film.date_finished" class="flex items-center gap-2">
+                  <span class="font-semibold">✅ Dokončeno:</span>
+                  <span>{{ formatDate(film.date_finished) }}</span>
+                </div>
+              </div>
+
+              <!-- Notes -->
+              <div *ngIf="film.notes" class="mt-3 p-3 bg-gray-50 rounded-lg text-sm text-gray-700">
+                <span class="font-semibold">📝 Poznámky:</span> {{ film.notes }}
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex flex-col gap-2 ml-4">
+              <button (click)="openFilmDetail(film)" 
+                      class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      title="Zobrazit detail">
+                👁️
+              </button>
+              <button (click)="deleteFilm(film, $event)" 
+                      class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      title="Smazat">
+                🗑️
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Floating Action Button -->
+  <button *ngIf="!isLoading && films.length > 0"
+          (click)="addFilm()" 
+          class="fixed bottom-6 right-6 bg-blue-600 text-white w-14 h-14 rounded-full shadow-lg hover:bg-blue-700 hover:shadow-xl transition-all flex items-center justify-center text-2xl">
+    ➕
+  </button>
+</div>

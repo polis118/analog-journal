@@ -1,0 +1,127 @@
+<div class="relative flex h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-hidden" appSwipeBack>
+  <!-- Top App Bar -->
+  <header class="flex items-center bg-background-light dark:bg-background-dark px-4 pb-2 justify-between shrink-0 border-b border-white/10" style="padding-top: max(env(safe-area-inset-top), 1rem);">
+    <div class="flex size-12 shrink-0 items-center cursor-pointer" (click)="goBack()">
+      <span class="material-symbols-outlined text-zinc-900 dark:text-white !text-2xl">arrow_back</span>
+    </div>
+    <h1 class="text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-zinc-900 dark:text-white text-center">Settings</h1>
+    <div class="flex w-12 items-center justify-end"></div>
+  </header>
+
+  <!-- Main Content: Settings Options -->
+  <main class="flex-1 overflow-y-auto">
+    
+    <!-- Database Statistics -->
+    <section class="px-4 pt-6 pb-4">
+      <h2 class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-3">Database Statistics</h2>
+      <div class="grid grid-cols-3 gap-3">
+        <div class="bg-white dark:bg-zinc-800 rounded-xl p-4 text-center border border-zinc-200 dark:border-zinc-700">
+          <div class="text-2xl font-bold text-primary mb-1">{{ dbStats.films }}</div>
+          <div class="text-xs text-zinc-600 dark:text-zinc-400">Films</div>
+        </div>
+        <div class="bg-white dark:bg-zinc-800 rounded-xl p-4 text-center border border-zinc-200 dark:border-zinc-700">
+          <div class="text-2xl font-bold text-primary mb-1">{{ dbStats.frames }}</div>
+          <div class="text-xs text-zinc-600 dark:text-zinc-400">Frames</div>
+        </div>
+        <div class="bg-white dark:bg-zinc-800 rounded-xl p-4 text-center border border-zinc-200 dark:border-zinc-700">
+          <div class="text-2xl font-bold text-primary mb-1">{{ dbStats.cameras }}</div>
+          <div class="text-xs text-zinc-600 dark:text-zinc-400">Cameras</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Data Management -->
+    <section class="px-4 py-4">
+      <h2 class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-3">Data Management</h2>
+      <div class="space-y-2">
+        
+        <button (click)="exportData()" 
+                class="w-full bg-white dark:bg-zinc-800 rounded-xl p-4 text-left border border-zinc-200 dark:border-zinc-700 hover:border-primary hover:bg-primary/5 transition-all">
+          <div class="flex items-center gap-3">
+            <div class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-blue-500/20 text-blue-600 dark:text-blue-400">
+              <span class="material-symbols-outlined">upload</span>
+            </div>
+            <div class="flex-1">
+              <div class="font-semibold text-zinc-900 dark:text-white">Export Data</div>
+              <div class="text-sm text-zinc-500 dark:text-zinc-400">Download backup as JSON</div>
+            </div>
+          </div>
+        </button>
+
+        <button (click)="importData()" 
+                class="w-full bg-white dark:bg-zinc-800 rounded-xl p-4 text-left border border-zinc-200 dark:border-zinc-700 hover:border-primary hover:bg-primary/5 transition-all">
+          <div class="flex items-center gap-3">
+            <div class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-green-500/20 text-green-600 dark:text-green-400">
+              <span class="material-symbols-outlined">download</span>
+            </div>
+            <div class="flex-1">
+              <div class="font-semibold text-zinc-900 dark:text-white">Import Data</div>
+              <div class="text-sm text-zinc-500 dark:text-zinc-400">Restore from backup file</div>
+            </div>
+          </div>
+        </button>
+
+        <button (click)="clearAllData()" 
+                class="w-full bg-white dark:bg-zinc-800 rounded-xl p-4 text-left border border-zinc-200 dark:border-zinc-700 hover:border-red-500 hover:bg-red-500/5 transition-all">
+          <div class="flex items-center gap-3">
+            <div class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-red-500/20 text-red-600 dark:text-red-400">
+              <span class="material-symbols-outlined">delete_forever</span>
+            </div>
+            <div class="flex-1">
+              <div class="font-semibold text-red-600 dark:text-red-400">Clear All Data</div>
+              <div class="text-sm text-zinc-500 dark:text-zinc-400">Delete everything permanently</div>
+            </div>
+          </div>
+        </button>
+
+      </div>
+    </section>
+
+    <!-- App Information -->
+    <section class="px-4 py-4">
+      <h2 class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-3">About</h2>
+      <div class="space-y-2">
+        
+        <div class="bg-white dark:bg-zinc-800 rounded-xl p-4 border border-zinc-200 dark:border-zinc-700">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="font-semibold text-zinc-900 dark:text-white">Version</div>
+              <div class="text-sm text-zinc-500 dark:text-zinc-400">{{ appVersion }}</div>
+            </div>
+            <span class="material-symbols-outlined text-zinc-400">info</span>
+          </div>
+        </div>
+
+        <button (click)="openDocumentation()" 
+                class="w-full bg-white dark:bg-zinc-800 rounded-xl p-4 text-left border border-zinc-200 dark:border-zinc-700 hover:border-primary hover:bg-primary/5 transition-all">
+          <div class="flex items-center gap-3">
+            <div class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-amber-500/20 text-amber-600 dark:text-amber-400">
+              <span class="material-symbols-outlined">menu_book</span>
+            </div>
+            <div class="flex-1">
+              <div class="font-semibold text-zinc-900 dark:text-white">Documentation</div>
+              <div class="text-sm text-zinc-500 dark:text-zinc-400">Learn how to use the app</div>
+            </div>
+          </div>
+        </button>
+
+        <button (click)="shareFeedback()" 
+                class="w-full bg-white dark:bg-zinc-800 rounded-xl p-4 text-left border border-zinc-200 dark:border-zinc-700 hover:border-primary hover:bg-primary/5 transition-all">
+          <div class="flex items-center gap-3">
+            <div class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-purple-500/20 text-purple-600 dark:text-purple-400">
+              <span class="material-symbols-outlined">feedback</span>
+            </div>
+            <div class="flex-1">
+              <div class="font-semibold text-zinc-900 dark:text-white">Send Feedback</div>
+              <div class="text-sm text-zinc-500 dark:text-zinc-400">Help us improve the app</div>
+            </div>
+          </div>
+        </button>
+
+      </div>
+    </section>
+
+    <!-- Footer spacing -->
+    <div class="h-8"></div>
+  </main>
+</div>

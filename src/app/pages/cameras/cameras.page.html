@@ -1,0 +1,61 @@
+<div class="relative flex h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-hidden" appSwipeBack>
+  <!-- Top App Bar -->
+  <header class="flex items-center bg-background-light dark:bg-background-dark px-4 pb-2 justify-between shrink-0 border-b border-white/10" style="padding-top: max(env(safe-area-inset-top), 1rem);">
+    <div class="flex size-12 shrink-0 items-center cursor-pointer" (click)="goBack()">
+      <span class="material-symbols-outlined text-zinc-900 dark:text-white !text-2xl">arrow_back</span>
+    </div>
+    <h1 class="text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-zinc-900 dark:text-white text-center">My Cameras</h1>
+    <div class="flex w-12 items-center justify-end"></div>
+  </header>
+
+  <!-- Main Content: List of Cameras -->
+  <main class="flex-1 overflow-y-auto px-4 pt-4">
+    
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && cameras.length === 0" class="flex flex-col items-center justify-center h-[calc(100vh-200px)] text-center px-6">
+      <div class="flex items-center justify-center rounded-full bg-zinc-200 dark:bg-zinc-800 size-20 mb-6 text-zinc-500 dark:text-zinc-400">
+        <span class="material-symbols-outlined !text-4xl">photo_camera</span>
+      </div>
+      <h2 class="text-xl font-bold text-zinc-900 dark:text-white mb-2">No Cameras Yet</h2>
+      <p class="text-base text-zinc-500 dark:text-zinc-400">Tap the '+' button to add your first camera.</p>
+    </div>
+
+    <!-- Cameras List -->
+    <div *ngIf="!isLoading && cameras.length > 0" class="flex flex-col gap-3">
+      <!-- List Item -->
+      <div *ngFor="let camera of cameras" 
+           class="flex items-center gap-4 bg-white dark:bg-zinc-900/50 rounded-xl p-4 min-h-[72px] justify-between">
+        <div class="flex items-center gap-4 flex-grow">
+          <div class="flex items-center justify-center rounded-lg bg-zinc-200 dark:bg-zinc-800 shrink-0 size-12 text-zinc-900 dark:text-white">
+            <span class="material-symbols-outlined !text-2xl">photo_camera</span>
+          </div>
+          <div class="flex flex-col justify-center flex-grow">
+            <div class="flex items-center gap-2">
+              <p class="text-base font-medium leading-normal text-zinc-900 dark:text-white line-clamp-1">{{ camera.name }}</p>
+              <span *ngIf="camera.current_film_id" 
+                    class="text-xs px-2 py-1 rounded-full bg-green-600 dark:bg-green-700 text-white font-semibold"
+                    title="Has film loaded">IN USE</span>
+            </div>
+            <p class="text-sm font-normal leading-normal text-zinc-500 dark:text-zinc-400 line-clamp-1">{{ camera.brand }} • {{ camera.type }}</p>
+            <p *ngIf="camera.notes" class="text-xs font-normal leading-normal text-zinc-400 dark:text-zinc-500 line-clamp-1 mt-1">{{ camera.notes }}</p>
+          </div>
+        </div>
+        <div class="shrink-0">
+          <button (click)="deleteCamera(camera, $event)"
+                  class="flex items-center justify-center rounded-lg size-10 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors"
+                  title="Delete camera">
+            <span class="material-symbols-outlined text-red-600 dark:text-red-500 !text-xl">delete</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Floating Action Button (FAB) -->
+  <div class="absolute bottom-5 right-5">
+    <button (click)="addCamera()"
+            class="flex h-14 w-14 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-primary text-white shadow-lg">
+      <span class="material-symbols-outlined !text-3xl">add</span>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,77 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Analog Journal</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="resetDatabase()" fill="clear">
+        <ion-icon slot="icon-only" name="trash"></ion-icon>
+      </ion-button>
+      <ion-button (click)="addFilm()" fill="clear">
+        <ion-icon slot="icon-only" name="add"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <!-- Debug info - VŽDY VIDITELNÝ -->
+  <div style="background: #f0f0f0; padding: 16px; margin-bottom: 16px; border-radius: 8px; font-family: monospace; font-size: 12px;">
+    <p style="margin: 0 0 8px 0;"><strong>🔍 DEBUG INFO:</strong></p>
+    <p style="margin: 4px 0;">isLoading: <strong [style.color]="isLoading ? 'red' : 'green'">{{ isLoading }}</strong></p>
+    <p style="margin: 4px 0;">Počet filmů: <strong style="color: blue;">{{ films.length }}</strong></p>
+    
+    <div style="margin-top: 12px; display: flex; gap: 8px;">
+      <ion-button size="small" (click)="addSampleFilms()" expand="block" color="success">
+        ➕ Přidat filmy
+      </ion-button>
+      <ion-button size="small" (click)="loadFilms()" expand="block" color="primary">
+        🔄 Reload
+      </ion-button>
+    </div>
+    
+    <!-- Seznam filmů v debug panelu -->
+    <div style="margin-top: 8px; padding: 8px; background: white; border-radius: 4px;">
+      <p style="margin: 0 0 4px 0;"><strong>Filmy ({{ films.length }}):</strong></p>
+      <div *ngFor="let film of films; let i = index" style="margin: 4px 0; padding: 4px; background: #e8f5e9; border-left: 3px solid #4caf50;">
+        {{ i + 1 }}. {{ film.name }} ({{ film.brand }}, ISO {{ film.iso }})
+      </div>
+      <p *ngIf="films.length === 0" style="margin: 8px 0; color: #999; font-style: italic;">
+        Žádné filmy v poli
+      </p>
+    </div>
+  </div>
+
+  <!-- HLAVNÍ SEZNAM - BEZ PODMÍNEK -->
+  <div style="background: white; padding: 16px; border-radius: 8px;">
+    <h2 style="margin: 0 0 16px 0; color: #333;">
+      📽️ Seznam filmů ({{ films.length }})
+    </h2>
+    
+    <!-- ZOBRAZ VŽDY, I KDYŽ JE PRÁZDNÝ -->
+    <div style="min-height: 200px;">
+      <div *ngFor="let film of films; let i = index" 
+           style="background: #f5f5f5; padding: 16px; margin-bottom: 12px; border-radius: 8px; border-left: 4px solid #3880ff;">
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+          <div>
+            <h3 style="margin: 0 0 8px 0; color: #333; font-size: 18px;">
+              {{ i + 1 }}. {{ film.name }}
+            </h3>
+            <p style="margin: 4px 0; color: #666;">
+              📷 {{ film.brand }} | 🎞️ ISO {{ film.iso }} | 🎨 {{ film.type }}
+            </p>
+            <p *ngIf="film.camera" style="margin: 4px 0; color: #999; font-size: 14px;">
+              📸 {{ film.camera }}
+            </p>
+          </div>
+          <ion-button size="small" fill="clear" color="danger" (click)="deleteFilm(film, $event)">
+            <ion-icon slot="icon-only" name="trash"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+      
+      <p *ngIf="films.length === 0" style="text-align: center; color: #999; padding: 40px;">
+        Žádné filmy k zobrazení
+      </p>
+    </div>
+  </div>
+</ion-content>
+
