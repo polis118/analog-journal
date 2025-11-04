@@ -1,0 +1,248 @@
+<div class="relative flex h-screen w-full flex-col bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-zinc-950 dark:to-zinc-900 overflow-hidden" appSwipeBack>
+  <!-- Top App Bar -->
+  <header class="flex items-center bg-white/80 dark:bg-zinc-900/80 backdrop-blur-lg px-4 pb-2 justify-between shrink-0 border-b border-zinc-200 dark:border-zinc-800" style="padding-top: max(env(safe-area-inset-top), 1rem);">
+    <div class="flex size-12 shrink-0 items-center cursor-pointer" (click)="goBack()">
+      <span class="material-symbols-outlined text-zinc-900 dark:text-white !text-2xl">arrow_back</span>
+    </div>
+    <h1 class="text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-zinc-900 dark:text-white text-center">Documentation</h1>
+    <div class="flex w-12 items-center justify-end"></div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 overflow-y-auto">
+    <div class="max-w-4xl mx-auto px-5 py-8">
+      
+      <!-- Introduction -->
+      <section class="bg-white dark:bg-zinc-900 rounded-2xl p-6 mb-6 shadow-sm">
+        <h2 class="text-2xl font-bold text-zinc-900 dark:text-white mb-4">Welcome to Analog Journal</h2>
+        <p class="text-zinc-600 dark:text-zinc-400 mb-3">
+          Analog Journal is an application for managing analog films and photographs. It helps you track films, 
+          cameras, and details of each individual frame.
+        </p>
+        <p class="text-zinc-600 dark:text-zinc-400">
+          All data is stored locally on your device - you don't need an account or internet connection 
+          for basic features.
+        </p>
+      </section>
+
+      <!-- Quick Start -->
+      <section class="bg-white dark:bg-zinc-900 rounded-2xl p-6 mb-6 shadow-sm">
+        <h2 class="text-xl font-bold text-zinc-900 dark:text-white mb-4 flex items-center gap-2">
+          <span class="material-symbols-outlined text-blue-600">rocket_launch</span>
+          Quick Start
+        </h2>
+        <ol class="space-y-3 text-zinc-600 dark:text-zinc-400">
+          <li class="flex gap-3">
+            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 text-sm font-bold flex items-center justify-center">1</span>
+            <span>Add your <strong>cameras</strong> in the Cameras section</span>
+          </li>
+          <li class="flex gap-3">
+            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 text-sm font-bold flex items-center justify-center">2</span>
+            <span>Create a new <strong>film</strong> on the home screen</span>
+          </li>
+          <li class="flex gap-3">
+            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 text-sm font-bold flex items-center justify-center">3</span>
+            <span>Load the film into a camera in Camera Detail</span>
+          </li>
+          <li class="flex gap-3">
+            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 text-sm font-bold flex items-center justify-center">4</span>
+            <span>After each shot, add a record in Film Detail</span>
+          </li>
+          <li class="flex gap-3">
+            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 text-sm font-bold flex items-center justify-center">5</span>
+            <span>After shooting the film, mark it as <strong>developed</strong></span>
+          </li>
+        </ol>
+      </section>
+
+      <!-- Key Features -->
+      <section class="bg-white dark:bg-zinc-900 rounded-2xl p-6 mb-6 shadow-sm">
+        <h2 class="text-xl font-bold text-zinc-900 dark:text-white mb-4 flex items-center gap-2">
+          <span class="material-symbols-outlined text-green-600">stars</span>
+          Key Features
+        </h2>
+        <div class="grid gap-4">
+          
+          <div class="flex gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800">
+            <span class="material-symbols-outlined text-blue-600">photo_camera</span>
+            <div>
+              <h3 class="font-semibold text-zinc-900 dark:text-white mb-1">Camera Management</h3>
+              <p class="text-sm text-zinc-600 dark:text-zinc-400">
+                Add cameras, load films into them, track their status
+              </p>
+            </div>
+          </div>
+
+          <div class="flex gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800">
+            <span class="material-symbols-outlined text-purple-600">movie</span>
+            <div>
+              <h3 class="font-semibold text-zinc-900 dark:text-white mb-1">Film Management</h3>
+              <p class="text-sm text-zinc-600 dark:text-zinc-400">
+                Create film records with type, brand, ISO and other details
+              </p>
+            </div>
+          </div>
+
+          <div class="flex gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800">
+            <span class="material-symbols-outlined text-orange-600">image</span>
+            <div>
+              <h3 class="font-semibold text-zinc-900 dark:text-white mb-1">Frame Details</h3>
+              <p class="text-sm text-zinc-600 dark:text-zinc-400">
+                Record aperture, shutter speed, lens, scene and notes
+              </p>
+            </div>
+          </div>
+
+          <div class="flex gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800">
+            <span class="material-symbols-outlined text-red-600">location_on</span>
+            <div>
+              <h3 class="font-semibold text-zinc-900 dark:text-white mb-1">GPS and Maps</h3>
+              <p class="text-sm text-zinc-600 dark:text-zinc-400">
+                Track where photos were taken with GPS and maps (Google Maps / OpenStreetMap)
+              </p>
+            </div>
+          </div>
+
+          <div class="flex gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800">
+            <span class="material-symbols-outlined text-green-600">backup</span>
+            <div>
+              <h3 class="font-semibold text-zinc-900 dark:text-white mb-1">Backup</h3>
+              <p class="text-sm text-zinc-600 dark:text-zinc-400">
+                Export all data to JSON file, import backups back
+              </p>
+            </div>
+          </div>
+
+          <div class="flex gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800">
+            <span class="material-symbols-outlined text-indigo-600">offline_bolt</span>
+            <div>
+              <h3 class="font-semibold text-zinc-900 dark:text-white mb-1">Offline First</h3>
+              <p class="text-sm text-zinc-600 dark:text-zinc-400">
+                All data stored locally on your device, works without internet
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Tips -->
+      <section class="bg-white dark:bg-zinc-900 rounded-2xl p-6 mb-6 shadow-sm">
+        <h2 class="text-xl font-bold text-zinc-900 dark:text-white mb-4 flex items-center gap-2">
+          <span class="material-symbols-outlined text-yellow-600">lightbulb</span>
+          Tips & Tricks
+        </h2>
+        <div class="space-y-3 text-zinc-600 dark:text-zinc-400">
+          <div class="flex gap-3">
+            <span class="material-symbols-outlined text-zinc-400">swipe</span>
+            <p><strong>Swipe back:</strong> Swipe from left to right to go back to previous page</p>
+          </div>
+          <div class="flex gap-3">
+            <span class="material-symbols-outlined text-zinc-400">ads_click</span>
+            <p><strong>Expandable buttons:</strong> Click circular buttons to show full text</p>
+          </div>
+          <div class="flex gap-3">
+            <span class="material-symbols-outlined text-zinc-400">edit</span>
+            <p><strong>Custom values:</strong> When selecting aperture or shutter speed, you can use "Custom" for your own values</p>
+          </div>
+          <div class="flex gap-3">
+            <span class="material-symbols-outlined text-zinc-400">undo</span>
+            <p><strong>Reversible actions:</strong> Developed films can be reverted back to undeveloped</p>
+          </div>
+          <div class="flex gap-3">
+            <span class="material-symbols-outlined text-zinc-400">save</span>
+            <p><strong>Regular backups:</strong> Export data in Settings before important changes</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Film States -->
+      <section class="bg-white dark:bg-zinc-900 rounded-2xl p-6 mb-6 shadow-sm">
+        <h2 class="text-xl font-bold text-zinc-900 dark:text-white mb-4 flex items-center gap-2">
+          <span class="material-symbols-outlined text-purple-600">sync_alt</span>
+          Film States
+        </h2>
+        <div class="space-y-4">
+          
+          <div class="p-4 rounded-xl border-2 border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="material-symbols-outlined text-green-600">photo_camera</span>
+              <h3 class="font-semibold text-zinc-900 dark:text-white">Active Film</h3>
+            </div>
+            <p class="text-sm text-zinc-600 dark:text-zinc-400">
+              Film is loaded in a camera and ready for shooting. You can add frames. Shown with green border.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl border-2 border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="material-symbols-outlined text-blue-600" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+              <h3 class="font-semibold text-zinc-900 dark:text-white">Developed Film</h3>
+            </div>
+            <p class="text-sm text-zinc-600 dark:text-zinc-400">
+              Film has been shot and developed (archived). Cannot add more frames, but you can revert the status. Shown with blue border.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl border-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="material-symbols-outlined text-zinc-600">pending</span>
+              <h3 class="font-semibold text-zinc-900 dark:text-white">Undeveloped Film</h3>
+            </div>
+            <p class="text-sm text-zinc-600 dark:text-zinc-400">
+              Film is waiting to be shot or developed. You can load it into a camera and add frames. Shown with gray border.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Data Management -->
+      <section class="bg-white dark:bg-zinc-900 rounded-2xl p-6 mb-6 shadow-sm">
+        <h2 class="text-xl font-bold text-zinc-900 dark:text-white mb-4 flex items-center gap-2">
+          <span class="material-symbols-outlined text-red-600">database</span>
+          Data Management
+        </h2>
+        
+        <div class="space-y-4">
+          <div>
+            <h3 class="font-semibold text-zinc-900 dark:text-white mb-2 flex items-center gap-2">
+              <span class="material-symbols-outlined text-sm">download</span>
+              Export Data
+            </h3>
+            <p class="text-sm text-zinc-600 dark:text-zinc-400 mb-2">
+              In Settings, click "Export Data" to download a JSON file with all data (films, frames, cameras).
+              Keep this file as a backup.
+            </p>
+          </div>
+
+          <div>
+            <h3 class="font-semibold text-zinc-900 dark:text-white mb-2 flex items-center gap-2">
+              <span class="material-symbols-outlined text-sm">upload</span>
+              Import Data
+            </h3>
+            <p class="text-sm text-zinc-600 dark:text-zinc-400 mb-2">
+              In Settings, click "Import Data" and select a JSON file from previous export. 
+              System checks for duplicates and imports only new data.
+            </p>
+          </div>
+
+          <div class="p-3 rounded-xl bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800">
+            <p class="text-sm text-yellow-800 dark:text-yellow-200 flex items-start gap-2">
+              <span class="material-symbols-outlined text-lg">warning</span>
+              <span><strong>Warning:</strong> Data is stored on your device. Clearing browser/app data will delete app data. 
+              Export backups regularly!</span>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Version -->
+      <div class="text-center mt-8 text-sm text-zinc-500 dark:text-zinc-600">
+        <p>Analog Journal v1.0.0</p>
+        <p>© 2025 - All rights reserved</p>
+      </div>
+
+    </div>
+  </main>
+</div>

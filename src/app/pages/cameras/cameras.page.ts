@@ -78,6 +78,28 @@ export class CamerasPage implements OnInit {
     }
   }
 
+  async editCamera(camera: Camera, event: Event) {
+    event.stopPropagation();
+
+    const field = await this.showCameraEditMenuDialog(camera);
+    if (!field) return;
+
+    switch (field) {
+      case 'name':
+        await this.showCameraTextInputDialog('Name', camera.name, 'name', camera);
+        break;
+      case 'brand':
+        await this.showCameraTextInputDialog('Brand', camera.brand, 'brand', camera);
+        break;
+      case 'type':
+        await this.showCameraEditTypeDialog(camera);
+        break;
+      case 'notes':
+        await this.showCameraTextInputDialog('Notes', camera.notes || '', 'notes', camera);
+        break;
+    }
+  }
+
   async deleteCamera(camera: Camera, event: Event) {
     event.stopPropagation();
 
@@ -223,6 +245,134 @@ export class CamerasPage implements OnInit {
         resolve(null);
       });
     });
+  }
+
+  private showCameraEditMenuDialog(camera: Camera): Promise<string | null> {
+    return new Promise((resolve) => {
+      const overlay = document.createElement('div');
+      overlay.className = 'fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4';
+      
+      overlay.innerHTML = `
+        <div class="bg-white dark:bg-zinc-900 rounded-2xl max-w-md w-full">
+          <div class="p-6">
+            <h2 class="text-xl font-bold text-zinc-900 dark:text-white mb-4">Edit Camera</h2>
+            <div class="space-y-2">
+              <button data-field="name" class="edit-option w-full p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-left transition-colors">
+                <div class="font-semibold text-zinc-900 dark:text-white">Name</div>
+                <div class="text-sm text-zinc-500 dark:text-zinc-400">${camera.name || 'Not set'}</div>
+              </button>
+              <button data-field="brand" class="edit-option w-full p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-left transition-colors">
+                <div class="font-semibold text-zinc-900 dark:text-white">Brand</div>
+                <div class="text-sm text-zinc-500 dark:text-zinc-400">${camera.brand || 'Not set'}</div>
+              </button>
+              <button data-field="type" class="edit-option w-full p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-left transition-colors">
+                <div class="font-semibold text-zinc-900 dark:text-white">Type</div>
+                <div class="text-sm text-zinc-500 dark:text-zinc-400">${camera.type || 'Not set'}</div>
+              </button>
+              <button data-field="notes" class="edit-option w-full p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-left transition-colors">
+                <div class="font-semibold text-zinc-900 dark:text-white">Notes</div>
+                <div class="text-sm text-zinc-500 dark:text-zinc-400">${camera.notes || 'Not set'}</div>
+              </button>
+            </div>
+          </div>
+          <div class="p-4 border-t border-zinc-200 dark:border-zinc-800">
+            <button class="cancel-btn w-full p-3 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white font-semibold">
+              Cancel
+            </button>
+          </div>
+        </div>
+      `;
+      
+      document.body.appendChild(overlay);
+      
+      overlay.querySelectorAll('.edit-option').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const field = (btn as HTMLElement).dataset['field'] || null;
+          document.body.removeChild(overlay);
+          resolve(field);
+        });
+      });
+      
+      overlay.querySelector('.cancel-btn')?.addEventListener('click', () => {
+        document.body.removeChild(overlay);
+        resolve(null);
+      });
+      
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+          document.body.removeChild(overlay);
+          resolve(null);
+        }
+      });
+    });
+  }
+
+  private async showCameraTextInputDialog(fieldName: string, currentValue: string, fieldKey: string, camera: Camera): Promise<void> {
+    const overlay = document.createElement('div');
+    overlay.className = 'fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4';
+    
+    overlay.innerHTML = `
+      <div class="bg-white dark:bg-zinc-900 rounded-2xl max-w-md w-full">
+        <div class="p-6">
+          <h2 class="text-xl font-bold text-zinc-900 dark:text-white mb-4">${fieldName}</h2>
+          <input type="text" 
+                 id="text-input" 
+                 value="${currentValue || ''}" 
+                 class="w-full p-3 rounded-xl border-2 border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:border-primary focus:outline-none"
+                 placeholder="Enter ${fieldName.toLowerCase()}">
+        </div>
+        <div class="p-4 border-t border-zinc-200 dark:border-zinc-800 flex gap-3">
+          <button class="cancel-btn flex-1 p-3 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white font-semibold">
+            Cancel
+          </button>
+          <button class="save-btn flex-1 p-3 rounded-xl bg-primary text-white font-semibold">
+            Save
+          </button>
+        </div>
+      </div>
+    `;
+    
+    return new Promise((resolve) => {
+      document.body.appendChild(overlay);
+      
+      const input = overlay.querySelector('#text-input') as HTMLInputElement;
+      input.focus();
+      input.select();
+      
+      const saveValue = async () => {
+        const value = input.value.trim();
+        document.body.removeChild(overlay);
+        
+        if (value !== currentValue) {
+          await this.cameraService.updateCamera({ ...camera, [fieldKey]: value });
+          await this.loadCameras();
+          this.showToast(`${fieldName} updated`);
+        }
+        resolve();
+      };
+      
+      overlay.querySelector('.save-btn')?.addEventListener('click', saveValue);
+      
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          saveValue();
+        }
+      });
+      
+      overlay.querySelector('.cancel-btn')?.addEventListener('click', () => {
+        document.body.removeChild(overlay);
+        resolve();
+      });
+    });
+  }
+
+  private async showCameraEditTypeDialog(camera: Camera): Promise<void> {
+    const type = await this.showCameraTypeDialog();
+    if (!type) return;
+
+    await this.cameraService.updateCamera({ ...camera, type });
+    await this.loadCameras();
+    this.showToast('Type updated');
   }
 
   // Visual dialog for camera type selection

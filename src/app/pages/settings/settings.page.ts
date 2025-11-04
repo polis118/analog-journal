@@ -267,7 +267,7 @@ export class SettingsPage implements OnInit {
   }
 
   openDocumentation() {
-    this.showToast('Documentation coming soon');
+    this.router.navigate(['/documentation']);
   }
 
   shareFeedback() {

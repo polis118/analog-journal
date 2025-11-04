@@ -40,7 +40,12 @@
             <p *ngIf="camera.notes" class="text-xs font-normal leading-normal text-zinc-400 dark:text-zinc-500 line-clamp-1 mt-1">{{ camera.notes }}</p>
           </div>
         </div>
-        <div class="shrink-0">
+        <div class="shrink-0 flex gap-2">
+          <button (click)="editCamera(camera, $event)"
+                  class="flex items-center justify-center rounded-lg size-10 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors"
+                  title="Edit camera">
+            <span class="material-symbols-outlined text-zinc-600 dark:text-zinc-400 !text-xl">edit</span>
+          </button>
           <button (click)="deleteCamera(camera, $event)"
                   class="flex items-center justify-center rounded-lg size-10 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors"
                   title="Delete camera">

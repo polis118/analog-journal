@@ -2,6 +2,7 @@ import { ApplicationConfig, provideZoneChangeDetection, APP_INITIALIZER } from '
 import { provideRouter } from '@angular/router';
 import { provideIonicAngular } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
+import { Router } from '@angular/router';
 import { 
   add, 
   trash, 
@@ -17,10 +18,23 @@ import {
 
 import { routes } from './app.routes';
 import { DatabaseService } from './services/database.service';
+import { FilmService } from './services/film.service';
 
 // Database initialization function
 export function initializeDatabase(databaseService: DatabaseService) {
   return () => databaseService.initializeDatabase();
+}
+
+// Check if first run and redirect to documentation
+export function checkFirstRun(filmService: FilmService, router: Router) {
+  return async () => {
+    // Wait a bit for database to be ready
+    await new Promise(resolve => setTimeout(resolve, 100));
+    const films = await filmService.getAllFilms();
+    if (films.length === 0) {
+      router.navigate(['/documentation'], { queryParams: { firstRun: 'true' } });
+    }
+  };
 }
 
 // Register icons
@@ -46,6 +60,12 @@ export const appConfig: ApplicationConfig = {
       provide: APP_INITIALIZER,
       useFactory: initializeDatabase,
       deps: [DatabaseService],
+      multi: true
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: checkFirstRun,
+      deps: [FilmService, Router],
       multi: true
     }
   ]

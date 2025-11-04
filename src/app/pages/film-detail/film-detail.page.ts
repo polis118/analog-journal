@@ -82,45 +82,25 @@ export class FilmDetailPage implements OnInit {
   async editFilm() {
     if (!this.film) return;
 
-    const name = prompt('Film name:', this.film.name);
-    if (name === null) return; // User cancelled
+    const field = await this.showFilmEditMenuDialog();
+    if (!field) return;
 
-    const brand = prompt('Brand:', this.film.brand);
-    if (brand === null) return;
-
-    const type = prompt('Type (color/bw/slide):', this.film.type);
-    if (type === null) return;
-
-    const iso = prompt('ISO:', String(this.film.iso));
-    if (iso === null) return;
-
-    const camera = prompt('Camera:', this.film.camera);
-    if (camera === null) return;
-
-    const lens = prompt('Lens:', this.film.lens);
-    if (lens === null) return;
-
-    const notes = prompt('Notes:', this.film.notes);
-    if (notes === null) return;
-
-    try {
-      const updatedFilm: Film = {
-        ...this.film,
-        name: name || this.film.name,
-        brand: brand || this.film.brand,
-        type: type || this.film.type,
-        iso: parseInt(iso) || this.film.iso,
-        camera: camera || this.film.camera,
-        lens: lens || this.film.lens,
-        notes: notes || this.film.notes
-      };
-
-      await this.filmService.updateFilm(updatedFilm);
-      this.film = updatedFilm;
-      this.showToast('Film updated successfully');
-    } catch (error) {
-      console.error('Error updating film:', error);
-      this.showToast('Error updating film');
+    switch (field) {
+      case 'name':
+        await this.showFilmTextInputDialog('Name', this.film.name, 'name');
+        break;
+      case 'brand':
+        await this.showFilmTextInputDialog('Brand', this.film.brand, 'brand');
+        break;
+      case 'type':
+        await this.showFilmTypeDialog();
+        break;
+      case 'iso':
+        await this.showFilmISODialog();
+        break;
+      case 'notes':
+        await this.showFilmTextInputDialog('Notes', this.film.notes, 'notes');
+        break;
     }
   }
 
@@ -380,6 +360,249 @@ export class FilmDetailPage implements OnInit {
     }
   }
 
+  private showFilmEditMenuDialog(): Promise<string | null> {
+    return new Promise((resolve) => {
+      const overlay = document.createElement('div');
+      overlay.className = 'fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4';
+      
+      overlay.innerHTML = `
+        <div class="bg-white dark:bg-zinc-900 rounded-2xl max-w-md w-full">
+          <div class="p-6">
+            <h2 class="text-xl font-bold text-zinc-900 dark:text-white mb-4">Edit Film</h2>
+            <div class="space-y-2">
+              <button data-field="name" class="edit-option w-full p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-left transition-colors">
+                <div class="font-semibold text-zinc-900 dark:text-white">Name</div>
+                <div class="text-sm text-zinc-500 dark:text-zinc-400">${this.film?.name || 'Not set'}</div>
+              </button>
+              <button data-field="brand" class="edit-option w-full p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-left transition-colors">
+                <div class="font-semibold text-zinc-900 dark:text-white">Brand</div>
+                <div class="text-sm text-zinc-500 dark:text-zinc-400">${this.film?.brand || 'Not set'}</div>
+              </button>
+              <button data-field="type" class="edit-option w-full p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-left transition-colors">
+                <div class="font-semibold text-zinc-900 dark:text-white">Type</div>
+                <div class="text-sm text-zinc-500 dark:text-zinc-400">${this.film?.type || 'Not set'}</div>
+              </button>
+              <button data-field="iso" class="edit-option w-full p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-left transition-colors">
+                <div class="font-semibold text-zinc-900 dark:text-white">ISO</div>
+                <div class="text-sm text-zinc-500 dark:text-zinc-400">${this.film?.iso || 'Not set'}</div>
+              </button>
+              <button data-field="notes" class="edit-option w-full p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-left transition-colors">
+                <div class="font-semibold text-zinc-900 dark:text-white">Notes</div>
+                <div class="text-sm text-zinc-500 dark:text-zinc-400">${this.film?.notes || 'Not set'}</div>
+              </button>
+            </div>
+          </div>
+          <div class="p-4 border-t border-zinc-200 dark:border-zinc-800">
+            <button class="cancel-btn w-full p-3 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white font-semibold">
+              Cancel
+            </button>
+          </div>
+        </div>
+      `;
+      
+      document.body.appendChild(overlay);
+      
+      overlay.querySelectorAll('.edit-option').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const field = (btn as HTMLElement).dataset['field'] || null;
+          document.body.removeChild(overlay);
+          resolve(field);
+        });
+      });
+      
+      overlay.querySelector('.cancel-btn')?.addEventListener('click', () => {
+        document.body.removeChild(overlay);
+        resolve(null);
+      });
+      
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+          document.body.removeChild(overlay);
+          resolve(null);
+        }
+      });
+    });
+  }
+
+  private async showFilmTypeDialog(): Promise<void> {
+    const types = ['Color Negative', 'Black & White', 'Slide', 'Instant'];
+    
+    const overlay = document.createElement('div');
+    overlay.className = 'fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4';
+    
+    overlay.innerHTML = `
+      <div class="bg-white dark:bg-zinc-900 rounded-2xl max-w-md w-full">
+        <div class="p-6">
+          <h2 class="text-xl font-bold text-zinc-900 dark:text-white mb-4">Film Type</h2>
+          <div class="grid grid-cols-2 gap-2">
+            ${types.map(type => `
+              <button data-type="${type}" class="type-btn p-4 rounded-xl border-2 border-zinc-200 dark:border-zinc-700 hover:border-primary hover:bg-primary/5 transition-all">
+                <div class="font-semibold text-zinc-900 dark:text-white">${type}</div>
+              </button>
+            `).join('')}
+          </div>
+        </div>
+        <div class="p-4 border-t border-zinc-200 dark:border-zinc-800">
+          <button class="cancel-btn w-full p-3 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white font-semibold">
+            Cancel
+          </button>
+        </div>
+      </div>
+    `;
+    
+    return new Promise((resolve) => {
+      document.body.appendChild(overlay);
+      
+      overlay.querySelectorAll('.type-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const type = (btn as HTMLElement).dataset['type'] || '';
+          document.body.removeChild(overlay);
+          
+          if (this.film) {
+            await this.filmService.updateFilm({ ...this.film, type });
+            await this.loadFilmData();
+            this.showToast('Type updated');
+          }
+          resolve();
+        });
+      });
+      
+      overlay.querySelector('.cancel-btn')?.addEventListener('click', () => {
+        document.body.removeChild(overlay);
+        resolve();
+      });
+    });
+  }
+
+  private async showFilmISODialog(): Promise<void> {
+    const isoValues = [50, 100, 200, 400, 800, 1600, 3200];
+    
+    const overlay = document.createElement('div');
+    overlay.className = 'fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4';
+    
+    overlay.innerHTML = `
+      <div class="bg-white dark:bg-zinc-900 rounded-2xl max-w-md w-full">
+        <div class="p-6">
+          <h2 class="text-xl font-bold text-zinc-900 dark:text-white mb-4">ISO</h2>
+          <div class="grid grid-cols-3 gap-2">
+            ${isoValues.map(iso => `
+              <button data-iso="${iso}" class="iso-btn p-4 rounded-xl border-2 border-zinc-200 dark:border-zinc-700 hover:border-primary hover:bg-primary/5 transition-all">
+                <div class="font-semibold text-zinc-900 dark:text-white">${iso}</div>
+              </button>
+            `).join('')}
+            <button data-iso="custom" class="iso-btn p-4 rounded-xl border-2 border-primary bg-primary/10 hover:bg-primary/20 transition-all col-span-3">
+              <div class="font-semibold text-primary">Custom</div>
+            </button>
+          </div>
+        </div>
+        <div class="p-4 border-t border-zinc-200 dark:border-zinc-800">
+          <button class="cancel-btn w-full p-3 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white font-semibold">
+            Cancel
+          </button>
+        </div>
+      </div>
+    `;
+    
+    return new Promise((resolve) => {
+      document.body.appendChild(overlay);
+      
+      overlay.querySelectorAll('.iso-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const isoStr = (btn as HTMLElement).dataset['iso'] || '';
+          document.body.removeChild(overlay);
+          
+          let iso: number;
+          if (isoStr === 'custom') {
+            const customValue = prompt('Enter custom ISO value:');
+            if (!customValue) {
+              resolve();
+              return;
+            }
+            iso = parseInt(customValue);
+            if (isNaN(iso)) {
+              this.showToast('Invalid ISO value');
+              resolve();
+              return;
+            }
+          } else {
+            iso = parseInt(isoStr);
+          }
+          
+          if (this.film) {
+            await this.filmService.updateFilm({ ...this.film, iso });
+            await this.loadFilmData();
+            this.showToast('ISO updated');
+          }
+          resolve();
+        });
+      });
+      
+      overlay.querySelector('.cancel-btn')?.addEventListener('click', () => {
+        document.body.removeChild(overlay);
+        resolve();
+      });
+    });
+  }
+
+  private async showFilmTextInputDialog(fieldName: string, currentValue: string, fieldKey: string): Promise<void> {
+    const overlay = document.createElement('div');
+    overlay.className = 'fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4';
+    
+    overlay.innerHTML = `
+      <div class="bg-white dark:bg-zinc-900 rounded-2xl max-w-md w-full">
+        <div class="p-6">
+          <h2 class="text-xl font-bold text-zinc-900 dark:text-white mb-4">${fieldName}</h2>
+          <input type="text" 
+                 id="text-input" 
+                 value="${currentValue || ''}" 
+                 class="w-full p-3 rounded-xl border-2 border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:border-primary focus:outline-none"
+                 placeholder="Enter ${fieldName.toLowerCase()}">
+        </div>
+        <div class="p-4 border-t border-zinc-200 dark:border-zinc-800 flex gap-3">
+          <button class="cancel-btn flex-1 p-3 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white font-semibold">
+            Cancel
+          </button>
+          <button class="save-btn flex-1 p-3 rounded-xl bg-primary text-white font-semibold">
+            Save
+          </button>
+        </div>
+      </div>
+    `;
+    
+    return new Promise((resolve) => {
+      document.body.appendChild(overlay);
+      
+      const input = overlay.querySelector('#text-input') as HTMLInputElement;
+      input.focus();
+      input.select();
+      
+      const saveValue = async () => {
+        const value = input.value.trim();
+        document.body.removeChild(overlay);
+        
+        if (this.film && value !== currentValue) {
+          await this.filmService.updateFilm({ ...this.film, [fieldKey]: value });
+          await this.loadFilmData();
+          this.showToast(`${fieldName} updated`);
+        }
+        resolve();
+      };
+      
+      overlay.querySelector('.save-btn')?.addEventListener('click', saveValue);
+      
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          saveValue();
+        }
+      });
+      
+      overlay.querySelector('.cancel-btn')?.addEventListener('click', () => {
+        document.body.removeChild(overlay);
+        resolve();
+      });
+    });
+  }
+
   toggleDevelopedButton() {
     // Clear any existing timer
     if (this.collapseTimer) {
@@ -585,7 +808,13 @@ export class FilmDetailPage implements OnInit {
           },
           (error) => {
             loadingToast.remove();
-            alert('Could not get GPS location: ' + error.message);
+            console.log('GPS location error:', error.message);
+            // User denied permission or GPS unavailable - silently fail
+          },
+          {
+            enableHighAccuracy: true,    // Use precise GPS positioning
+            timeout: 10000,              // 10 second timeout for GPS
+            maximumAge: 30000            // Accept cached position up to 30 seconds old
           }
         );
       });
